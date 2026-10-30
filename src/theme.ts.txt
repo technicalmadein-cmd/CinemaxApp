@@ -1,0 +1,67 @@
+// CineMax theme — dark only. Luxe OLED black + amber accent.
+import { useMemo } from "react";
+import { Appearance, StyleSheet, useColorScheme } from "react-native";
+
+export type ColorScheme = "light" | "dark";
+
+const dark = {
+  surface: "#000000",
+  onSurface: "#FFFFFF",
+  surfaceSecondary: "#111113",
+  onSurfaceSecondary: "#F3F4F6",
+  surfaceTertiary: "#1A1A1E",
+  onSurfaceTertiary: "#E5E7EB",
+  surfaceInverse: "#FFFFFF",
+  onSurfaceInverse: "#000000",
+  muted: "#A1A1AA",
+
+  brand: "#F59E0B",
+  onBrand: "#000000",
+  brandPrimary: "#F59E0B",
+  onBrandPrimary: "#000000",
+  brandSecondary: "#D97706",
+  onBrandSecondary: "#FFFFFF",
+  brandTertiary: "#452203",
+  onBrandTertiary: "#FDE68A",
+
+  success: "#10B981",
+  onSuccess: "#FFFFFF",
+  warning: "#F59E0B",
+  onWarning: "#000000",
+  error: "#E11D48",
+  onError: "#FFFFFF",
+  info: "#3B82F6",
+  onInfo: "#FFFFFF",
+
+  border: "#27272A",
+  borderStrong: "#3F3F46",
+  divider: "#1F1F22",
+};
+
+export type ThemeColors = typeof dark;
+export const defaultScheme = "dark" satisfies ColorScheme;
+export const themes: { light?: ThemeColors; dark: ThemeColors } = { dark };
+
+export function setColorScheme(scheme: ColorScheme | null) {
+  Appearance.setColorScheme?.(scheme ?? "unspecified");
+}
+setColorScheme?.(defaultScheme);
+
+export function useTheme(): { scheme: ColorScheme; colors: ThemeColors } {
+  const _ = useColorScheme();
+  return { scheme: "dark", colors: themes.dark };
+}
+
+export const colors = themes.dark;
+
+export function makeStyles<T extends StyleSheet.NamedStyles<T> | StyleSheet.NamedStyles<any>>(
+  factory: (c: ThemeColors) => T & StyleSheet.NamedStyles<any>,
+): () => T {
+  return function useStyles(): T {
+    const { colors: c } = useTheme();
+    return useMemo(() => StyleSheet.create(factory(c)), [c]);
+  };
+}
+
+export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32, xxxl: 48 };
+export const radius = { sm: 6, md: 12, lg: 20, pill: 999 };
